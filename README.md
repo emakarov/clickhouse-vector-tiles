@@ -41,4 +41,10 @@ Logs example of successful tile server launch
 2025/06/01 16:18:17 MapLibre viewer: http://localhost:8085/maplibre
 2025/06/01 16:18:17 Mapbox GL viewer: http://localhost:8085/mapboxgl
 ```
+
 3. Open http://localhost:8085/maplibre or http://localhost:8085/mapboxgl in your browser
+
+
+
+https://github.com/user-attachments/assets/ff9bb305-2216-4fd7-86c3-90444d61af29
+
