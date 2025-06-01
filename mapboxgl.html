@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Clickhouse Vector Tiles Server Map - Mapbox GL</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+        <link
+            href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css"
+            rel="stylesheet"
+        />
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            #map {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+            // Get Mapbox token from server config endpoint
+            fetch("/config")
+                .then((response) => response.json())
+                .then((config) => {
+                    if (!config.mapboxToken) {
+                        document.getElementById("map").innerHTML =
+                            '<div style="color: white; text-align: center; padding: 20px;">Mapbox token not configured</div>';
+                        return;
+                    }
+
+                    mapboxgl.accessToken = config.mapboxToken;
+
+                    const map = new mapboxgl.Map({
+                        container: "map",
+                        style: "mapbox://styles/mapbox/dark-v11",
+                        center: [0, 20],
+                        zoom: 2,
+                    });
+
+                    map.on("load", () => {
+                        map.addSource("towers", {
+                            type: "vector",
+                            tiles: [
+                                window.location.origin +
+                                    "/tiles/{z}/{x}/{y}.mvt",
+                            ],
+                            minzoom: 0,
+                            maxzoom: 14,
+                        });
+
+                        map.addLayer({
+                            id: "towers",
+                            type: "circle",
+                            source: "towers",
+                            "source-layer": "stops",
+                            paint: {
+                                "circle-radius": {
+                                    base: 1.5,
+                                    stops: [
+                                        [0, 1],
+                                        [10, 3],
+                                        [14, 6],
+                                    ],
+                                },
+                                "circle-color": "#4A90E2",
+                                "circle-opacity": 0.8,
+                                "circle-stroke-color": "#ffffff",
+                                "circle-stroke-width": 1,
+                                "circle-stroke-opacity": 0.5,
+                            },
+                        });
+                    });
+
+                    map.addControl(new mapboxgl.NavigationControl());
+                })
+                .catch((error) => {
+                    console.error("Error loading config:", error);
+                    document.getElementById("map").innerHTML =
+                        '<div style="color: white; text-align: center; padding: 20px;">Error loading configuration</div>';
+                });
+        </script>
+    </body>
+</html>
