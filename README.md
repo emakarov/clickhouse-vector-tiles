@@ -1,7 +1,8 @@
 Simple example on how to use clickhouse as a Mapbox Vector Tile server
 through intermediate golang webserver integrated with MapboxGL.
 
-This example shows
+This example contains golang-based server and environment variables
+to connect to ClickHouse playground (Cell towers database).
 
 How to test this example
 1. Install go
